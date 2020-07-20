@@ -85,7 +85,16 @@
   #elif ENABLED(AZSMZ_12864)
     #define U8GLIB_ST7565_64128N
   #endif
-
+#elif ENABLED(TINYOLED)//pasc mini oled
+  // #ifndef U8GLIB_SSD1306   // define U8GLIB_SSD1306 in Configuration.h if not using SH1106 version
+   // #define U8GLIB_SH1106 // SSD1306 and SH1106 are similar, but have slightly different horizontal shift
+  // #endif
+  #define IS_U8GLIB_SSD1306
+  #define ULTIPANEL
+  //#define NEWPANEL
+	//#define ULTRA_LCD
+  //#define DOGLCD
+  #define REVERSE_ENCODER_DIRECTION
 #elif ENABLED(OLED_PANEL_TINYBOY2)
 
   #define IS_U8GLIB_SSD1306

@@ -579,7 +579,7 @@
  * Note: For Bowden Extruders make this large enough to allow load/unload.
  */
 #define PREVENT_LENGTHY_EXTRUDE
-#define EXTRUDE_MAXLENGTH 200
+#define EXTRUDE_MAXLENGTH 810
 
 //===========================================================================
 //======================== Thermal Runaway Protection =======================
@@ -720,7 +720,7 @@
 //#define ENDSTOP_NOISE_THRESHOLD 2
 
 // Check for stuck or disconnected endstops during homing moves.
-//#define DETECT_BROKEN_ENDSTOP
+#define DETECT_BROKEN_ENDSTOP
 
 //=============================================================================
 //============================== Movement Settings ============================
@@ -1814,6 +1814,7 @@
 //
 //#define ULTIPANEL
 
+#define TINYOLED
 //
 // PanelOne from T3P3 (via RAMPS 1.4 AUX2/AUX3)
 // http://reprap.org/wiki/PanelOne
@@ -2071,7 +2072,7 @@
 //
 // TinyBoy2 128x64 OLED / Encoder Panel
 //
-#define OLED_PANEL_TINYBOY2
+//#define OLED_PANEL_TINYBOY2
 
 //
 // MKS OLED 1.3" 128 × 64 FULL GRAPHICS CONTROLLER
