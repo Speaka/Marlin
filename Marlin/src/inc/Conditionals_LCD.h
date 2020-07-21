@@ -85,7 +85,16 @@
   #elif ENABLED(AZSMZ_12864)
     #define U8GLIB_ST7565_64128N
   #endif
-
+#elif ENABLED(TINYOLED)//pasc mini oled
+  // #ifndef U8GLIB_SSD1306   // define U8GLIB_SSD1306 in Configuration.h if not using SH1106 version
+   // #define U8GLIB_SH1106 // SSD1306 and SH1106 are similar, but have slightly different horizontal shift
+  // #endif
+  #define IS_U8GLIB_SSD1306
+  #define ULTIPANEL
+  //#define NEWPANEL
+	//#define ULTRA_LCD
+  //#define DOGLCD
+  #define REVERSE_ENCODER_DIRECTION
 #elif ENABLED(OLED_PANEL_TINYBOY2)
 
   #define IS_U8GLIB_SSD1306
@@ -106,9 +115,15 @@
 #elif ENABLED(CR10_STOCKDISPLAY)
 
   #define IS_RRD_FG_SC
-  #define BOARD_ST7920_DELAY_1 DELAY_NS(125)
-  #define BOARD_ST7920_DELAY_2 DELAY_NS(125)
-  #define BOARD_ST7920_DELAY_3 DELAY_NS(125)
+  #ifndef ST7920_DELAY_1
+    #define ST7920_DELAY_1 DELAY_NS(125)
+  #endif
+  #ifndef ST7920_DELAY_2
+    #define ST7920_DELAY_2 DELAY_NS(125)
+  #endif
+  #ifndef ST7920_DELAY_3
+    #define ST7920_DELAY_3 DELAY_NS(125)
+  #endif
 
 #elif ENABLED(MKS_12864OLED)
 
@@ -119,27 +134,6 @@
 
   #define IS_RRD_SC
   #define IS_U8GLIB_SSD1306
-
-#elif ENABLED(FYSETC_242_OLED_12864)
-
-  #define IS_RRD_SC
-  #define U8GLIB_SH1106
-
-  #define LED_CONTROL_MENU
-  #define NEOPIXEL_LED
-  #undef NEOPIXEL_TYPE
-  #define NEOPIXEL_TYPE       NEO_RGB
-  #if NEOPIXEL_PIXELS < 3
-    #undef NEOPIXELS_PIXELS
-    #define NEOPIXEL_PIXELS     3
-  #endif
-  #ifndef NEOPIXEL_BRIGHTNESS
-    #define NEOPIXEL_BRIGHTNESS 127
-  #endif
-
-  #if ENABLED(PSU_CONTROL)
-    #define LED_BACKLIGHT_TIMEOUT 10000
-  #endif
 
 #elif ANY(FYSETC_MINI_12864_X_X, FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0, FYSETC_MINI_12864_2_1, FYSETC_GENERIC_12864_1_1)
 
@@ -506,8 +500,6 @@
     #define HAS_MULTI_HOTEND 1
     #define HAS_HOTEND_OFFSET 1
   #endif
-#else
-  #undef PID_PARAMS_PER_HOTEND
 #endif
 
 // Helper macros for extruder and hotend arrays
@@ -595,6 +587,14 @@
 
 #ifndef NUM_SERVOS
   #define NUM_SERVOS 0
+#endif
+
+#ifndef PREHEAT_1_LABEL
+  #define PREHEAT_1_LABEL "PLA"
+#endif
+
+#ifndef PREHEAT_2_LABEL
+  #define PREHEAT_2_LABEL "ABS"
 #endif
 
 /**
