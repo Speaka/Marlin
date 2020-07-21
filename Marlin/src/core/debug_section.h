@@ -21,33 +21,29 @@
  */
 #pragma once
 
-// R25 = 2.5 MOhm, beta25 = 4500 K, 4.7 kOhm pull-up, DyzeDesign 500 °C Thermistor
-const temp_entry_t temptable_66[] PROGMEM = {
-  { OV(  17.5), 850 },
-  { OV(  17.9), 500 },
-  { OV(  21.7), 480 },
-  { OV(  26.6), 460 },
-  { OV(  33.1), 440 },
-  { OV(  41.0), 420 },
-  { OV(  52.3), 400 },
-  { OV(  67.7), 380 },
-  { OV(  86.5), 360 },
-  { OV( 112.0), 340 },
-  { OV( 147.2), 320 },
-  { OV( 194.0), 300 },
-  { OV( 254.3), 280 },
-  { OV( 330.2), 260 },
-  { OV( 427.9), 240 },
-  { OV( 533.4), 220 },
-  { OV( 646.5), 200 },
-  { OV( 754.4), 180 },
-  { OV( 844.3), 160 },
-  { OV( 911.7), 140 },
-  { OV( 958.6), 120 },
-  { OV( 988.8), 100 },
-  { OV(1006.6),  80 },
-  { OV(1015.8),  60 },
-  { OV(1021.3),  30 },
-  { OV(  1022),  25 },
-  { OV(  1023),  20 }
+#include "serial.h"
+#include "../module/motion.h"
+
+class SectionLog {
+public:
+  SectionLog(PGM_P const msg=nullptr, bool inbug=true) {
+    the_msg = msg;
+    if ((debug = inbug)) echo_msg(PSTR(">>>"));
+  }
+
+  ~SectionLog() { if (debug) echo_msg(PSTR("<<<")); }
+
+private:
+  PGM_P the_msg;
+  bool debug;
+
+  void echo_msg(PGM_P const pre) {
+    serialprintPGM(pre);
+    if (the_msg) {
+      SERIAL_CHAR(' ');
+      serialprintPGM(the_msg);
+    }
+    SERIAL_CHAR(' ');
+    print_xyz(current_position);
+  }
 };
