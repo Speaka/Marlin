@@ -115,6 +115,16 @@
     #define U8GLIB_ST7565_64128N
   #endif
 
+#elif ENABLED(TINYOLED)//pasc mini oled
+  // #ifndef U8GLIB_SSD1306   // define U8GLIB_SSD1306 in Configuration.h if not using SH1106 version
+   // #define U8GLIB_SH1106 // SSD1306 and SH1106 are similar, but have slightly different horizontal shift
+  // #endif
+  #define IS_U8GLIB_SSD1306
+  //#define ULTIPANEL
+	//#define NEWPANEL
+	//#define ULTRA_LCD
+  //#define DOGLCD
+
 #elif ENABLED(OLED_PANEL_TINYBOY2)
 
   #define IS_U8GLIB_SSD1306
@@ -372,7 +382,6 @@
   #define LCD_I2C_TYPE_MCP23017
   #define LCD_I2C_ADDRESS 0x20 // I2C Address of the port expander
   #define LCD_USE_I2C_BUZZER   // Enable buzzer on LCD (optional)
-  #define IS_ULTIPANEL 1
 
 #elif ENABLED(LCD_I2C_VIKI)
 
