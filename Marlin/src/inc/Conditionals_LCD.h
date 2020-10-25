@@ -120,7 +120,7 @@
    // #define U8GLIB_SH1106 // SSD1306 and SH1106 are similar, but have slightly different horizontal shift
   // #endif
   #define IS_U8GLIB_SSD1306
-  //#define ULTIPANEL
+  #define ULTIPANEL
 	//#define NEWPANEL
 	//#define ULTRA_LCD
   //#define DOGLCD
