@@ -159,8 +159,17 @@ void GcodeSuite::G35() {
       const float decimal_part = adjust - float(full_turns);
       const int minutes = trunc(decimal_part * 60.0f);
 
-      serialprintPGM(PSTR("Turn "));
-      serialprintPGM((char *)pgm_read_ptr(&tramming_point_name[i]));
+      //https://github.com/RealDeuce/Marlin/commit/486437ed5f6bf1644fc5802a1caa2a73a4b735ac
+      SERIAL_ECHOPGM("ATurn ");//serial.h l274 #define SERIAL_ECHOPGM(S)           (serialprintPGM(PSTR(S)))
+      serialprintPGM((char *)pgm_read_ptr(&tramming_point_name[i]));//konstante aus progmem
+
+      SERIAL_ECHOPGM("BTurn ");
+      SERIAL_ECHOPGM_P((char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l271
+
+      serial_echopair_PGM(PSTR("CTurn "),(char *)pgm_read_ptr(&tramming_point_name[i]));
+
+      SERIAL_ECHOPAIR_F("DTurn ",(char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l280
+
       SERIAL_ECHOPAIR(" ", (screw_thread & 1) == (adjust > 0) ? "CCW" : "CW",
              " by ", abs(full_turns), " turns");
       if (minutes) SERIAL_ECHOPAIR(" and ", abs(minutes), " minutes");
