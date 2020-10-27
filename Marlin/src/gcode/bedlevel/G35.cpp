@@ -130,8 +130,8 @@ void GcodeSuite::G35() {
 
     if (isnan(z_probed_height)) {
       SERIAL_ECHOPAIR("G35 failed at point ", int(i), " (");
-      serialprintPGM((char *)pgm_read_ptr(&tramming_point_name[i]));
-      serialprintPGM(PSTR(")"));
+      SERIAL_ECHOPGM_P((char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l271
+      SERIAL_ECHOPGM(")");
       SERIAL_ECHOLNPAIR_P(SP_X_STR, screws_tilt_adjust_pos[i].x, SP_Y_STR, screws_tilt_adjust_pos[i].y);
       err_break = true;
       break;
@@ -140,7 +140,7 @@ void GcodeSuite::G35() {
     if (DEBUGGING(LEVELING)) {
       DEBUG_ECHOPAIR("Probing point ", int(i), " (");
       DEBUG_PRINT_P((char *)pgm_read_ptr(&tramming_point_name[i]));
-      DEBUG_PRINT_P(PSTR(")"));
+      DEBUG_ECHOPGM(")");
       SERIAL_ECHOLNPAIR_P(SP_X_STR, screws_tilt_adjust_pos[i].x, SP_Y_STR, screws_tilt_adjust_pos[i].y, SP_Z_STR, z_probed_height);
     }
 
@@ -160,16 +160,18 @@ void GcodeSuite::G35() {
       const int minutes = trunc(decimal_part * 60.0f);
 
       //https://github.com/RealDeuce/Marlin/commit/486437ed5f6bf1644fc5802a1caa2a73a4b735ac
-      SERIAL_ECHOPGM("ATurn ");//serial.h l274 #define SERIAL_ECHOPGM(S)           (serialprintPGM(PSTR(S)))
-      serialprintPGM((char *)pgm_read_ptr(&tramming_point_name[i]));//konstante aus progmem
+      //SERIAL_ECHOPGM("ATurn ");//serial.h l274 #define SERIAL_ECHOPGM(S)           (serialprintPGM(PSTR(S)))
+      //serialprintPGM((char *)pgm_read_ptr(&tramming_point_name[i]));//konstante aus progmem
 
-      SERIAL_ECHOPGM("BTurn ");
+      SERIAL_ECHOPGM("Turn ");
       SERIAL_ECHOPGM_P((char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l271
 
-      serial_echopair_PGM(PSTR("CTurn "),(char *)pgm_read_ptr(&tramming_point_name[i]));
+      //serial_echopair_PGM(PSTR("CTurn "),(char *)pgm_read_ptr(&tramming_point_name[i]));
 
-      SERIAL_ECHOPAIR_F("DTurn ",(char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l280
+      //SERIAL_ECHOPAIR("DTurn ",(char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l280
 
+      //SERIAL_ECHOPAIR_F("ETurn ",(char *)pgm_read_ptr(&tramming_point_name[i]));//serial.h l280
+      //memory leak? pointer to ram instead flash
       SERIAL_ECHOPAIR(" ", (screw_thread & 1) == (adjust > 0) ? "CCW" : "CW",
              " by ", abs(full_turns), " turns");
       if (minutes) SERIAL_ECHOPAIR(" and ", abs(minutes), " minutes");
