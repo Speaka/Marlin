@@ -1348,8 +1348,10 @@ void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t 
     // Get the ABC or XYZ positions in mm
     abce_pos_t target = planner.get_axis_positions_mm();
 
+    SERIAL_ECHOLNPAIR("A:",target[axis]);
     target[axis] = 0;                         // Set the single homing axis to 0
     planner.set_machine_position_mm(target);  // Update the machine position
+    SERIAL_ECHOLNPAIR("B:",target[axis]);
 
     #if HAS_DIST_MM_ARG
       const xyze_float_t cart_dist_mm{0};
@@ -1357,7 +1359,8 @@ void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t 
 
     // Set delta/cartesian axes directly
     target[axis] = distance;                  // The move will be towards the endstop
-    planner.buffer_segment(target
+    SERIAL_ECHOLNPAIR("C:",target[axis]);
+    planner.buffer_segment(target//add move
       #if HAS_DIST_MM_ARG
         , cart_dist_mm
       #endif
@@ -1365,7 +1368,7 @@ void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t 
     );
   #endif
 
-  planner.synchronize();
+  planner.synchronize();//Block until all buffered steps are executed / cleaned
 
   if (is_home_dir) {
 
@@ -1820,7 +1823,8 @@ void homeaxis(const AxisEnum axis) {
 
     set_axis_is_at_home(axis);
     sync_plan_position();
-
+    SERIAL_ECHOLNPAIR("C:",destination[axis]);
+    SERIAL_ECHOLNPAIR("D:",current_position[axis]);
     destination[axis] = current_position[axis];
 
     if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);

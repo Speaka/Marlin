@@ -2716,7 +2716,7 @@ bool Planner::buffer_segment(const float &a, const float &b, const float &c, con
     TERN_(HAS_POSITION_FLOAT, position_float.e = e);
   }
 
-  /* <-- add a slash to enable
+  //* <-- add a slash to enable
     SERIAL_ECHOPAIR("  buffer_segment FR:", fr_mm_s);
     #if IS_KINEMATIC
       SERIAL_ECHOPAIR(" A:", a);
