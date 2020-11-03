@@ -541,6 +541,11 @@
         #define LCD_BACKLIGHT_PIN             39
       #endif
 
+    #elif ENABLED(TINYOLED)
+      #define BTN_EN1 31
+      #define BTN_EN2 33
+      #define BTN_ENC 35
+      
     #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
       #define BTN_EN1                         64
