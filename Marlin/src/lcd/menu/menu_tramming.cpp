@@ -41,12 +41,17 @@
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
+bool probing_running=false;
 
 bool probe_single_point() {
-  const float z_probed_height = probe.probe_at_point(screws_tilt_adjust_pos[tram_index], PROBE_PT_RAISE, 0, true);
-  DEBUG_ECHOLNPAIR("probe_single_point: ", z_probed_height, "mm");
-  z_measured[tram_index] = z_probed_height;
-  return !isnan(z_probed_height);
+  if(!probing_running){//lock multiple probing instances
+    probing_running=true;
+    const float z_probed_height = probe.probe_at_point(screws_tilt_adjust_pos[tram_index], PROBE_PT_RAISE, 0, true);
+    DEBUG_ECHOLNPAIR("probe_single_point: ", z_probed_height, "mm");
+    z_measured[tram_index] = z_probed_height;
+    probing_running = false;
+    return !isnan(z_probed_height);
+  }
 }
 
 void _menu_single_probe(const uint8_t point) {
