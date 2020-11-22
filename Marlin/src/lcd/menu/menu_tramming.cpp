@@ -41,14 +41,14 @@
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
-bool probing_running=false;
+bool already_probing=false;
 
 bool probe_single_point() {
   // In BLTOUCH HS mode, the probe travels in a deployed state.
   // Users of Tramming Wizard might have a badly misaligned bed, so raise Z by the
   // length of the deployed pin (BLTOUCH stroke < 7mm)
-  if(!probing_running){
-    probing_running = true;//lock multiple probing instances
+  if(!already_probing){
+    already_probing = true;//lock multiple probing instances
     do_blocking_move_to_z((Z_CLEARANCE_BETWEEN_PROBES) + TERN0(BLTOUCH_HS_MODE, 7));
     const float z_probed_height = probe.probe_at_point(screws_tilt_adjust_pos[tram_index], PROBE_PT_RAISE, 0, true);
     DEBUG_ECHOLNPAIR("probe_single_point: ", z_probed_height, "mm");
@@ -60,7 +60,7 @@ bool probe_single_point() {
       const xyz_pos_t wait_pos = ASSISTED_TRAMMING_WAIT_POSITION;
       do_blocking_move_to(wait_pos, XY_PROBE_FEEDRATE_MM_S);
     #endif
-    probing_running = false;
+    already_probing = false;
     return !isnan(z_probed_height);
   }
   return false;
