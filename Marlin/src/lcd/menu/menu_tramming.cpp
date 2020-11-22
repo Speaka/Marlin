@@ -41,6 +41,7 @@
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
+bool probing_running=false;
 
 bool probe_single_point() {
   // In BLTOUCH HS mode, the probe travels in a deployed state.
