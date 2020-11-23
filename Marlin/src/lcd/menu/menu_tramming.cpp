@@ -73,12 +73,13 @@ void _menu_single_probe(const uint8_t point) {
   else tram_index = point;
   ui.defer_status_screen();
   DEBUG_ECHOLNPAIR("Screen: single probe screen Arg:", tram_index);
+  do_blocking_move_to(screws_tilt_adjust_pos[tram_index], XY_PROBE_FEEDRATE_MM_S);
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
   STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[tram_index] - z_measured[reference])); // Print diff
   #ifdef ASSISTED_TRAMMING_WIZARD_AUTO  // should not be used with clear after probing
   ACTION_ITEM(MSG_BUTTON_NEXT, []{ auto_probing = false; _menu_single_probe(tram_index+1);}); // Next Point
-  ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); }); // Back
+  ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); ui.goto_previous_screen_no_defer(); }); // Back
   END_MENU();
   
   auto_probing = true;
