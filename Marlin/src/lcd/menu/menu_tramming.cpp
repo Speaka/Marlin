@@ -63,6 +63,7 @@ bool probe_single_point() {
 
 void _menu_single_probe(const uint8_t point) {
   tram_index = point;
+  ui.defer_status_screen();
   DEBUG_ECHOLNPAIR("Screen: single probe screen Arg:", point);
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
