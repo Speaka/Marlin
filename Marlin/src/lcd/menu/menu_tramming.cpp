@@ -41,6 +41,7 @@
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
+static uint8_t origin = 0;
 bool already_probing=false;
 
 bool probe_single_point() {
@@ -67,12 +68,15 @@ bool probe_single_point() {
 }
 
 void _menu_single_probe(const uint8_t point) {
-  tram_index = point;
+  if(point>=G35_PROBE_COUNT) tram_index=0;
+  else tram_index = 0;
+  ui.defer_status_screen();
   DEBUG_ECHOLNPAIR("Screen: single probe screen Arg:", point);
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
-  STATIC_ITEM(MSG_LAST_VALUE_SP, SS_LEFT, ftostr42_52(z_measured[0] - z_measured[point])); // Print diff
+  STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[origin] - z_measured[point])); // Print diff
   ACTION_ITEM(MSG_UBL_BC_INSERT2, []{ if (probe_single_point()) ui.refresh(); });
+  ACTION_ITEM(MSG_BUTTON_NEXT, []{ _menu_single_probe(tram_index+1);}); // Next Point
   ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); }); // Back
   END_MENU();
 }
