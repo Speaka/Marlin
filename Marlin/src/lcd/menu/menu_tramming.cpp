@@ -43,6 +43,7 @@ float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
 static uint8_t origin = 0;
 bool already_probing=false;
+bool auto_probing =false;
 
 bool probe_single_point() {
   // In BLTOUCH HS mode, the probe travels in a deployed state.
@@ -75,10 +76,23 @@ void _menu_single_probe(const uint8_t point) {
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
   STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[origin] - z_measured[point])); // Print diff
-  ACTION_ITEM(MSG_UBL_BC_INSERT2, []{ if (probe_single_point()) ui.refresh(); });
-  ACTION_ITEM(MSG_BUTTON_NEXT, []{ _menu_single_probe(tram_index+1);}); // Next Point
-  ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); }); // Back
+  #ifdef ASSISTED_TRAMMING_WIZARD_AUTO  // should not be used with clear after probing
+  ACTION_ITEM(MSG_BUTTON_NEXT, []{ auto_probing = false; _menu_single_probe(tram_index+1);}); // Next Point
+  ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); }); // Back
   END_MENU();
+  
+  auto_probing = true;
+  while (auto_probing) { // Also stop on tolerance reached? LEVEL_CORNERS_PROBE_TOLERANCE from level corner
+    if (probe_single_point()) ui.refresh();
+    idle();
+  }
+  auto_probing = false;
+  #else
+  ACTION_ITEM(MSG_UBL_BC_INSERT2, []{ if (probe_single_point()) ui.refresh(); }); // Manually initiate probing
+  ACTION_ITEM(MSG_BUTTON_NEXT, []{ _menu_single_probe(tram_index+1);}); // Next Point
+  ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); }); // Back  
+  END_MENU();
+  #endif 
 }
 
 void tramming_wizard_menu() {
