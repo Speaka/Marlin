@@ -41,7 +41,7 @@
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
 static uint8_t tram_index = 0;
-static uint8_t origin = 0;
+static uint8_t reference = 0;
 bool already_probing=false;
 bool auto_probing =false;
 
@@ -75,14 +75,14 @@ void _menu_single_probe(const uint8_t point) {
   DEBUG_ECHOLNPAIR("Screen: single probe screen Arg:", point);
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
-  STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[origin] - z_measured[point])); // Print diff
+  STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[tram_index] - z_measured[reference])); // Print diff
   #ifdef ASSISTED_TRAMMING_WIZARD_AUTO  // should not be used with clear after probing
   ACTION_ITEM(MSG_BUTTON_NEXT, []{ auto_probing = false; _menu_single_probe(tram_index+1);}); // Next Point
   ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); }); // Back
   END_MENU();
   
   auto_probing = true;
-  while (auto_probing) { // Also stop on tolerance reached? LEVEL_CORNERS_PROBE_TOLERANCE from level corner
+  while (auto_probing) { // Also stop on tolerance reached? LEVEL_CORNERS_PROBE_TOLERANCE from level corner PR
     if (probe_single_point()) ui.refresh();
     idle();
   }
@@ -98,11 +98,11 @@ void _menu_single_probe(const uint8_t point) {
 void tramming_wizard_menu() {
   DEBUG_ECHOLNPAIR("Screen: tramming_wizard_menu");
   START_MENU();
-  STATIC_ITEM(MSG_SELECT_ORIGIN);
+  STATIC_ITEM(MSG_SELECT_REFERENCE);
 
   // Draw a menu item for each tramming point
   LOOP_L_N(i, G35_PROBE_COUNT)
-    SUBMENU_N_P(i, (char*)pgm_read_ptr(&tramming_point_name[i]), []{ _menu_single_probe(MenuItemBase::itemIndex); });
+    SUBMENU_N_P(i, (char*)pgm_read_ptr(&tramming_point_name[i]), []{reference=MenuItemBase::itemIndex; _menu_single_probe(MenuItemBase::itemIndex); });
 
   ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); });
   END_MENU();

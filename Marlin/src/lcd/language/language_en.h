@@ -86,7 +86,7 @@ namespace Language_en {
   PROGMEM Language_Str MSG_SET_ORIGIN                      = _UxGT("Set Origin");
   PROGMEM Language_Str MSG_ASSISTED_TRAMMING               = _UxGT("Assisted Tramming");
   PROGMEM Language_Str MSG_TRAMMING_WIZARD                 = _UxGT("Tramming Wizard");
-  PROGMEM Language_Str MSG_SELECT_ORIGIN                   = _UxGT("Select Origin");
+  PROGMEM Language_Str MSG_SELECT_REFERENCE                   = _UxGT("Select Origin");
   PROGMEM Language_Str MSG_ADJUST_BED_SP                   = _UxGT("Adjust Bed: ");
   #if PREHEAT_COUNT
     PROGMEM Language_Str MSG_PREHEAT_1                     = _UxGT("Preheat ") PREHEAT_1_LABEL;
