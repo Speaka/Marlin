@@ -83,11 +83,10 @@ namespace Language_en {
   PROGMEM Language_Str MSG_Z_FADE_HEIGHT                   = _UxGT("Fade Height");
   PROGMEM Language_Str MSG_SET_HOME_OFFSETS                = _UxGT("Set Home Offsets");
   PROGMEM Language_Str MSG_HOME_OFFSETS_APPLIED            = _UxGT("Offsets Applied");
-  PROGMEM Language_Str MSG_SET_ORIGIN                      = _UxGT("Set Origin");
   PROGMEM Language_Str MSG_ASSISTED_TRAMMING               = _UxGT("Assisted Tramming");
   PROGMEM Language_Str MSG_TRAMMING_WIZARD                 = _UxGT("Tramming Wizard");
-  PROGMEM Language_Str MSG_SELECT_ORIGIN                   = _UxGT("Select Origin");
-  PROGMEM Language_Str MSG_LAST_VALUE_SP                   = _UxGT("Last value ");
+  PROGMEM Language_Str MSG_SELECT_REFERENCE                = _UxGT("Select Reference");
+  PROGMEM Language_Str MSG_ADJUST_BED_SP                   = _UxGT("Adjust Bed: ");
   #if PREHEAT_COUNT
     PROGMEM Language_Str MSG_PREHEAT_1                     = _UxGT("Preheat ") PREHEAT_1_LABEL;
     PROGMEM Language_Str MSG_PREHEAT_1_H                   = _UxGT("Preheat ") PREHEAT_1_LABEL " ~";
