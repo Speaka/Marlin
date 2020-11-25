@@ -36,7 +36,7 @@
 #include "../../module/probe.h"
 #include "../../gcode/queue.h"
 
-//#define DEBUG_OUT 1
+#define DEBUG_OUT 1
 #include "../../core/debug_out.h"
 
 float z_measured[G35_PROBE_COUNT] = { 0 };
@@ -68,20 +68,20 @@ bool probe_single_point() {
   return false;
 }
 
-void _menu_single_probe(const uint8_t point) {
-  if(point>=G35_PROBE_COUNT) tram_index=0;
-  else tram_index = point;
+void _menu_single_probe() {
+  if(tram_index>=G35_PROBE_COUNT) tram_index=0;
   ui.defer_status_screen();
-  DEBUG_ECHOLNPAIR("Screen: single probe screen Arg:", tram_index);
-  do_blocking_move_to(screws_tilt_adjust_pos[tram_index], XY_PROBE_FEEDRATE_MM_S);
+  DEBUG_ECHOLNPAIR("Screen: single probe screen TramIndex:", tram_index);
+  DEBUG_ECHOLNPAIR("Screen: Tramming reference:", reference);
   START_MENU();
   STATIC_ITEM(MSG_LEVEL_CORNERS, SS_LEFT);
+  STATIC_ITEM((char*)pgm_read_ptr(&tramming_point_name[tram_index]), SS_LEFT);    
   STATIC_ITEM(MSG_ADJUST_BED_SP, SS_LEFT, ftostr42_52(z_measured[tram_index] - z_measured[reference])); // Print diff
   #ifdef ASSISTED_TRAMMING_WIZARD_AUTO  // should not be used with clear after probing
   ACTION_ITEM(MSG_BUTTON_NEXT, []{ auto_probing = false; _menu_single_probe(tram_index+1);}); // Next Point
-  ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); ui.goto_previous_screen_no_defer(); }); // Back
+  ACTION_ITEM(MSG_BUTTON_DONE, []{ auto_probing = false; ui.goto_previous_screen_no_defer(); }); // Back
   END_MENU();
-  
+    
   auto_probing = true;
   while (auto_probing) { // Also stop on tolerance reached? LEVEL_CORNERS_PROBE_TOLERANCE from level corner PR
     if (probe_single_point()) ui.refresh();
@@ -90,7 +90,7 @@ void _menu_single_probe(const uint8_t point) {
   auto_probing = false;
   #else
   ACTION_ITEM(MSG_UBL_BC_INSERT2, []{ if (probe_single_point()) ui.refresh(); }); // Manually initiate probing
-  ACTION_ITEM(MSG_BUTTON_NEXT, []{ ui.goto_previous_screen_no_defer(); _menu_single_probe(tram_index+1);}); // Next Point *hacky
+  ACTION_ITEM(MSG_BUTTON_NEXT, []{ tram_index+=1; ui.goto_screen(_menu_single_probe);}); // Next Point *hacky
   ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); }); // Back  
   END_MENU();
   #endif 
@@ -102,9 +102,8 @@ void tramming_wizard_menu() {
   STATIC_ITEM(MSG_SELECT_REFERENCE);
 
   // Draw a menu item for each tramming point
-  LOOP_L_N(i, G35_PROBE_COUNT)
-    SUBMENU_N_P(i, (char*)pgm_read_ptr(&tramming_point_name[i]), []{reference=MenuItemBase::itemIndex; _menu_single_probe(MenuItemBase::itemIndex); });
-
+  LOOP_L_N(i, G35_PROBE_COUNT-1)
+    SUBMENU_N_P(i, (char*)pgm_read_ptr(&tramming_point_name[i]), []{uint8_t i=MenuItemBase::itemIndex; reference=i;tram_index=i; _menu_single_probe(); });
   ACTION_ITEM(MSG_BUTTON_DONE, []{ ui.goto_previous_screen_no_defer(); });
   END_MENU();
 }
@@ -112,18 +111,21 @@ void tramming_wizard_menu() {
 // Init the wizard and enter the submenu
 void goto_tramming_wizard() {
   DEBUG_ECHOLNPAIR("Screen: goto_tramming_wizard", 1);
-  tram_index = 0;
   ui.defer_status_screen();
   //probe_single_point(); // Probe first point to get differences
 
   // Inject G28, wait for homing to complete,
   set_all_unhomed();
-  queue.inject_P(G28_STR);
-  ui.goto_screen([]{
-    _lcd_draw_homing();
-    if (all_axes_homed())
-      ui.goto_screen(tramming_wizard_menu);
-  });
+  if (!all_axes_known()){
+    queue.inject_P(G28_STR);
+    ui.goto_screen([]{
+      _lcd_draw_homing();
+      if (all_axes_homed())
+        ui.goto_screen(tramming_wizard_menu);
+    });}
+  else{
+    ui.goto_screen(tramming_wizard_menu);
+  }
 }
 
 #endif // HAS_LCD_MENU && ASSISTED_TRAMMING_WIZARD
